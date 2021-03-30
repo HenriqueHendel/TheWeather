@@ -23,7 +23,7 @@ const Header = () => {
 const styles = StyleSheet.create({
     header: {
         width: '95%',
-        height: '55%',
+        height: '67%',
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 8
