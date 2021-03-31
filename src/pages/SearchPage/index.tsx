@@ -1,13 +1,95 @@
 import React, {useState} from 'react'
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Keyboard } from 'react-native'
+import {useNavigation} from '@react-navigation/native';
+import {LinearGradient} from 'expo-linear-gradient';
+import Conditions from '../../components/Conditions';
+
+import api, {api_key} from '../../services/api'
 
 import {Feather} from '@expo/vector-icons'
 
+interface CityProps {
+    results: {
+      date: string,
+      city_name: string,
+      temp: string,
+      wind_speedy: string,
+      sunrise: string,
+      sunset: string,
+      humidity: string,
+    }
+  }
+
 const SearchPage: React.FC = () => {
+    const {navigate} = useNavigation()
     const [textInput, setTextInput] = useState('')
+    const [city, setCity] = useState<null | CityProps>(null);
+    const [error, setError] = useState<null | string>(null)
+
+    async function handleSearch() {
+        const response = await api.get(`weather?key=${api_key}&city_name=${textInput}`);
+        console.log(response.data)
+
+        if(response.data.by === 'default'){
+            setError('Cidade não encontrada');
+            setTextInput('');
+            Keyboard.dismiss()
+
+            return
+        }
+
+        setCity(response.data)
+        setTextInput('');
+        Keyboard.dismiss();
+    }
+
+    if(city){
+        return (
+            <SafeAreaView style={styles.container} >
+                <TouchableOpacity style={styles.backButton} onPress={() => navigate('Home')} >
+                    <Feather 
+                        name='chevron-left'
+                        size={32}
+                        color='#000'
+                    />
+                    <Text style={{fontSize: 22}} >Voltar</Text>
+                </TouchableOpacity>
+
+                <View style={styles.searchInput} > 
+                    <TextInput 
+                        value={textInput}
+                        onChangeText={text => setTextInput(text)}
+                        placeholder='Ex. Campinas, SP'
+                        style={styles.input}
+                    />
+
+                    <TouchableOpacity style={styles.iconButtom} onPress={handleSearch} >
+                        <Feather name='search' size={22} color='#FFF' />
+                    </TouchableOpacity>
+                </View>
+
+                <LinearGradient
+                    style={styles.header}
+                    colors={['#1ed6ff', '#97c1ff']}
+                >
+                    <Text style={styles.date}>{city.results.date}</Text>
+                    <Text style={styles.city}>{city.results.city_name}</Text>
+
+                    <View>
+                        <Text style={styles.temp} >{city.results.temp}°</Text>
+                    </View>
+
+                    <Conditions weather={city} />
+                </LinearGradient>
+            </SafeAreaView>
+
+            
+        )
+    }
+
     return (
         <SafeAreaView style={styles.container} >
-            <TouchableOpacity style={styles.backButton} >
+            <TouchableOpacity style={styles.backButton} onPress={() => navigate('Home')} >
                 <Feather 
                     name='chevron-left'
                     size={32}
@@ -24,10 +106,13 @@ const SearchPage: React.FC = () => {
                     style={styles.input}
                 />
 
-                <TouchableOpacity style={styles.iconButtom} >
+                <TouchableOpacity style={styles.iconButtom} onPress={handleSearch} >
                     <Feather name='search' size={22} color='#FFF' />
                 </TouchableOpacity>
             </View>
+
+            {error && <Text style={{marginTop: 25, fontSize: 25}} >{error}</Text>}
+
         </SafeAreaView>
     )
 }
@@ -72,6 +157,28 @@ const styles = StyleSheet.create({
         height: 50,
         borderTopRightRadius: 8,
         borderBottomRightRadius: 8
+    },
+    header: {
+        marginTop: '5%',
+        width: '90%',
+        paddingTop: '5%',
+        padding: '5%',
+        alignItems: 'center',
+        borderRadius: 8,
+    },
+    date: {
+        color: '#FFF',
+        fontSize: 16
+    },
+    city: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#FFF'
+    },
+    temp: {
+        color: '#FFF',
+        fontSize: 90,
+        fontWeight: 'bold'
     }
 })
 

@@ -91,6 +91,7 @@ export default function Home() {
             <Conditions weather={weather} />
             <FlatList 
                 horizontal
+                showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{paddingBottom: '5%'}}
                 style={styles.list} 
                 data={forecast}

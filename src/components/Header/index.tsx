@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native'
 import {LinearGradient} from 'expo-linear-gradient'
 
 import {Ionicons} from '@expo/vector-icons'
-import { DrawerItem } from '@react-navigation/drawer'
 
 interface HeaderProps {
     background: string[]
@@ -28,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({background, icon, weather}) => {
         >
             <Text style={styles.date} >{weather.results.date}</Text>
             <Text style={styles.city} >{weather.results.city_name}</Text>
-            <Ionicons name='cloud' size={150} color={icon.color} />
+            <Ionicons name={icon.name} size={150} color={icon.color} />
 
             <Text style={styles.weather} >{weather.results.temp}°</Text>
 

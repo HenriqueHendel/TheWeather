@@ -23,7 +23,7 @@ const Forecast: React.FC<ForecastProps> = ({item}) => {
       <View style={styles.container} >
 
           <Text style={styles.date} >{item.date}</Text>
-          <Ionicons name='rainy-outline' color={icon.color} size={25} />
+          <Ionicons name={icon.name} color={icon.color} size={25} />
 
           <View style={styles.degrees} >
               <Text>{item.min}°</Text>
