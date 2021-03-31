@@ -3,18 +3,34 @@ import { View, Text, StyleSheet } from 'react-native'
 import {LinearGradient} from 'expo-linear-gradient'
 
 import {Ionicons} from '@expo/vector-icons'
+import { DrawerItem } from '@react-navigation/drawer'
 
-const Header = () => {
+interface HeaderProps {
+    background: string[]
+    icon: {
+        name: string | undefined,
+        color: string
+    }
+    weather: {
+        results: {
+            date: string,
+            city_name: string,
+            temp: string
+        }
+    }
+}
+
+const Header: React.FC<HeaderProps> = ({background, icon, weather}) => {
     return (
         <LinearGradient
             style={styles.header}
-            colors={['#1ed6ff', '#97c1ff']}
+            colors={background}
         >
-            <Text style={styles.date} >29/04/2021</Text>
-            <Text style={styles.city} >Feira de Santana</Text>
-            <Ionicons name='cloud' size={150}  color='#FFF' />
+            <Text style={styles.date} >{weather.results.date}</Text>
+            <Text style={styles.city} >{weather.results.city_name}</Text>
+            <Ionicons name='cloud' size={150} color={icon.color} />
 
-            <Text style={styles.weather} >30°</Text>
+            <Text style={styles.weather} >{weather.results.temp}°</Text>
 
         </LinearGradient>
     )
